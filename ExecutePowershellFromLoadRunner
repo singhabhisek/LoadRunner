@@ -1,0 +1,23 @@
+//LoadRunner to invoke Powershell
+Action()
+{
+    char Content[100];
+    long InPutFile;
+    char filename[100], command[1024];
+    //created two parameters : UserID to store the email Address to be passed to the powershell script
+    //                           DynamicOutPutLogParameter - Dynamic file name for output results
+    strcpy(filename,lr_eval_string("{DynamicOutPutLogParameter}"));
+    sprintf(command, "cmd.exe /c powershell -ExecutionPolicy Bypass -File generateOTP.ps1 %s > %s", lr_eval_string("{UserID}"), filename);
+    system(command);
+
+    //read the output file for OTP
+    InPutFile=fopen(filename,"r");
+    fread(Content,sizeof(char),2936, InPutFile);    
+    fclose(InPutFile);
+    
+    //created a parameter for further usage in script
+    lr_save_string(Content,"GeneratedOTP"); 
+    lr_error_message("FileContent : %s", lr_eval_string("{GeneratedOTP}"));
+    
+    return 0;
+}
