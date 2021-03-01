@@ -1,0 +1,25 @@
+//Sample LoadRunner (LR) Code that executes the JAR file, puts in a file and then stores in a parameter file to be used later.
+
+Action()
+{
+    char buffer2[100];
+    char Content[100];
+    long InPutFile;
+    char filename[100], command[1024];
+    
+
+    strcpy(filename,"OTPFileName.txt");
+
+    sprintf(command, "cmd.exe /c java -jar sample.jar > %s", filename);
+    system(command);
+
+    //read the output file for OTP
+    InPutFile=fopen(filename,"r");
+    fread(Content,sizeof(char),100, InPutFile);    
+    fclose(InPutFile);
+    
+    lr_error_message("%s",Content);
+    lr_save_string(Content, "p_OTP");
+
+    return 0;
+}
